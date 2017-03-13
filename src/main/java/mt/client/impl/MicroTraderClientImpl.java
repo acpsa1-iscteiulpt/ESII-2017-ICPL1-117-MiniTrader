@@ -11,6 +11,7 @@ import mt.comm.impl.ClientCommImpl;
 
 public class MicroTraderClientImpl implements MicroTraderClient {
 	//comentário de teste
+	//comentário de teste para o vídeo
 	public static void main(String args[]) {
 		ClientComm clientComm = new ClientCommImpl();
 		MicroTraderClient client = new MicroTraderClientImpl();
