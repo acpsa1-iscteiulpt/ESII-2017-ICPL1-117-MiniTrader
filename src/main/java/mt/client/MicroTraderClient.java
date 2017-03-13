@@ -2,6 +2,7 @@ package mt.client;
 
 import mt.comm.ClientComm;
 
+/**Test123**/
 /**
  * 
  * The MicroTraderClient should use the {@link ClientComm} interface to
