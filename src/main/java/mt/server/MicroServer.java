@@ -34,7 +34,7 @@ public class MicroServer implements MicroTraderServer {
 		MicroTraderServer server = new MicroServer();
 		server.start(serverComm);
 	}
-
+	//teste bom dia
 	public static final Logger LOGGER = Logger.getLogger(MicroServer.class.getName());
 
 	/**
