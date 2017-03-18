@@ -2,5 +2,5 @@
 Elementos do grupo:
 Alexandre Silva - 65915 acpsa1-iscteiulpt
 Diogo Ribeiro - 61130 djrar-iscteiulpt
-Luciana Micael - POE AQUI O RESTO (numero e user) 
+Luciana Micael - 54180 LucianaMicael 
 https://youtu.be/zHkkOMmkAyI
