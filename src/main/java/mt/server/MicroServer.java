@@ -116,18 +116,52 @@ public class MicroServer implements MicroTraderServer {
 				break;
 			case NEW_ORDER:
 				try {
-
+					boolean canBuy = true;
+					boolean canSell = true;
+					boolean regra3OK = true;
+					boolean regra2OK = true;
 					verifyUserConnected(msg);
-
-					if (msg.getOrder().getNumberOfUnits() < 10) {
-						String aviso3 = "Não podes fazer um pedido com quantidade inferior a 10 unidades.";
-						JOptionPane.showMessageDialog(null, aviso3);
-					} else {
-						if (msg.getOrder().getServerOrderID() == EMPTY) {
-							msg.getOrder().setServerOrderID(id++);
+					Set<Order> orders = orderMap.get(msg.getOrder().getNickname());
+					int sellOrders = 0;
+					for (Order order : orders) {
+						if (order.isSellOrder())
+							sellOrders++;
+						if (order.isSellOrder() && msg.getOrder().isBuyOrder()
+								&& order.getStock().equals(msg.getOrder().getStock())) {
+							canBuy = false;
 						}
-						notifyAllClients(msg.getOrder());
-						processNewOrder(msg);
+						if (order.isBuyOrder() && msg.getOrder().isSellOrder()
+								&& order.getStock().equals(msg.getOrder().getStock())) {
+							canSell = false;
+						}
+					}
+					if (msg.getOrder().getNumberOfUnits() < 10) {
+						String aviso3 = "Nao podes fazer um pedido com quantidade inferior a 10 unidades.";
+						JOptionPane.showMessageDialog(null, aviso3);
+						regra3OK = false;
+					}
+					if (sellOrders == 5 && msg.getOrder().isSellOrder()) {
+						String aviso = "Ja tens 5 pedidos de venda por liquidar.";
+						JOptionPane.showMessageDialog(null, aviso);
+						regra2OK = false;
+					}
+					if (msg.getOrder().isBuyOrder() && canBuy == true
+							|| msg.getOrder().isSellOrder() && canSell == true) {
+						if (regra2OK == true && regra3OK == true) {
+							if (msg.getOrder().getServerOrderID() == EMPTY) {
+								msg.getOrder().setServerOrderID(id++);
+							}
+							notifyAllClients(msg.getOrder());
+							processNewOrder(msg);
+						}
+					} else {
+						String aviso = "Nao podes comprar este stock porque tens um pedido de venda associado.";
+						String aviso2 = "Nao podes vender este stock porque tens um pedido de compra associado.";
+
+						if (msg.getOrder().isBuyOrder())
+							JOptionPane.showMessageDialog(null, aviso);
+						else
+							JOptionPane.showMessageDialog(null, aviso2);
 					}
 
 				} catch (ServerException e) {
