@@ -120,7 +120,7 @@ public class MicroServer implements MicroTraderServer {
 					verifyUserConnected(msg);
 
 					if (msg.getOrder().getNumberOfUnits() < 10) {
-						String aviso3 = "Não podes fazer um pedido com quantidade inferior a 10 unidades.";
+						String aviso3 = "Nao podes fazer um pedido com quantidade inferior a 10 unidades.";
 						JOptionPane.showMessageDialog(null, aviso3);
 					} else {
 						if (msg.getOrder().getServerOrderID() == EMPTY) {
