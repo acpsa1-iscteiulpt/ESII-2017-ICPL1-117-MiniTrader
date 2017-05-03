@@ -248,6 +248,7 @@ public class MicroServer implements MicroTraderServer {
 
 		// save the order on map
 		saveOrder(o);
+		xmlPersistence(msg, null, 2);
 
 		// if is buy order
 		if (o.isBuyOrder()) {
@@ -349,6 +350,9 @@ public class MicroServer implements MicroTraderServer {
 
 		updatedOrders.add(buyOrder);
 		updatedOrders.add(sellerOrder);
+		xmlPersistence(null, buyOrder, 1);
+		xmlPersistence(null, sellerOrder, 1);
+
 
 	}
 
@@ -401,5 +405,65 @@ public class MicroServer implements MicroTraderServer {
 				}
 			}
 		}
+	}
+	private void xmlPersistence(ServerSideMessage msg, Order order, int type) {
+		// type 1 is an order and type 2 is a message
+		try {
+
+			File inputFile = new File("C:/Users/djrart/git/ESII-2017-ICPL1-117-MiniTrader/persistence.xml");
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(inputFile);
+			doc.getDocumentElement().normalize();
+			Element newElementOrder = doc.createElement("Order");
+
+			if (type == 2) {
+				
+				newElementOrder.setAttribute("Id", Integer.toString(msg.getOrder().getServerOrderID()));
+				if (msg.getOrder().isBuyOrder())
+					newElementOrder.setAttribute("Type", "Buy");
+				else
+					newElementOrder.setAttribute("Type", "Sell");
+				newElementOrder.setAttribute("Stock", msg.getOrder().getStock());
+				newElementOrder.setAttribute("Units", Integer.toString(msg.getOrder().getNumberOfUnits()));
+				newElementOrder.setAttribute("Price", Double.toString(msg.getOrder().getPricePerUnit()));
+
+				// Create new element Customer
+				Element newElementCustomer = doc.createElement("Customer");
+				newElementCustomer.setTextContent(msg.getSenderNickname());
+				newElementOrder.appendChild(newElementCustomer);
+			} else {
+				newElementOrder.setAttribute("Id", Integer.toString(order.getServerOrderID()));
+				if (order.isBuyOrder())
+					newElementOrder.setAttribute("Type", "Buy");
+				else
+					newElementOrder.setAttribute("Type", "Sell");
+				newElementOrder.setAttribute("Stock", order.getStock());
+				newElementOrder.setAttribute("Units", Integer.toString(order.getNumberOfUnits()));
+				newElementOrder.setAttribute("Price", Double.toString(order.getPricePerUnit()));
+				
+				// Create new element Customer
+				Element newElementCustomer = doc.createElement("Customer");
+				newElementCustomer.setTextContent(order.getNickname());
+				newElementOrder.appendChild(newElementCustomer);
+			}
+
+			// Add new node to XML document root element
+			System.out.println("----- Adding new element to root element -----");
+			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			Node n = doc.getDocumentElement();
+			n.appendChild(newElementOrder);
+			// Save XML document
+			System.out.println("Save XML document.");
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			StreamResult result = new StreamResult(new FileOutputStream("persistence.xml"));
+			DOMSource source = new DOMSource(doc);
+			transformer.transform(source, result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }
