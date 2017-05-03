@@ -51,7 +51,7 @@ public class MicroServer implements MicroTraderServer {
 		MicroTraderServer server = new MicroServer();
 		server.start(serverComm);
 	}
-	//teste bom dia
+
 	public static final Logger LOGGER = Logger.getLogger(MicroServer.class.getName());
 
 	/**
@@ -116,19 +116,34 @@ public class MicroServer implements MicroTraderServer {
 				break;
 			case NEW_ORDER:
 				try {
-
+					
+					boolean regra3OK = true;
+					boolean regra2OK = true;
 					verifyUserConnected(msg);
-
-					if (msg.getOrder().getNumberOfUnits() < 10) {
-						String aviso3 = "Nao podes fazer um pedido com quantidade inferior a 10 unidades.";
-						JOptionPane.showMessageDialog(null, aviso3);
-					} else {
-						if (msg.getOrder().getServerOrderID() == EMPTY) {
-							msg.getOrder().setServerOrderID(id++);
-						}
-						notifyAllClients(msg.getOrder());
-						processNewOrder(msg);
+					Set<Order> orders = orderMap.get(msg.getOrder().getNickname());
+					int sellOrders = 0;
+					for (Order order : orders) {
+						if (order.isSellOrder())
+							sellOrders++;						
 					}
+					if (msg.getOrder().getNumberOfUnits() < 10) {
+						String aviso3 = "Não podes fazer um pedido com quantidade inferior a 10 unidades.";
+						JOptionPane.showMessageDialog(null, aviso3);
+						regra3OK = false;
+					}
+					if (sellOrders == 5 && msg.getOrder().isSellOrder()) {
+						String aviso = "Já tens 5 pedidos de venda por liquidar.";
+						JOptionPane.showMessageDialog(null, aviso);
+						regra2OK = false;
+					}
+					
+						if (regra2OK == true && regra3OK == true) {
+							if (msg.getOrder().getServerOrderID() == EMPTY) {
+								msg.getOrder().setServerOrderID(id++);
+							}
+							notifyAllClients(msg.getOrder());
+							processNewOrder(msg);
+						} 
 
 				} catch (ServerException e) {
 					serverComm.sendError(msg.getSenderNickname(), e.getMessage());
@@ -249,6 +264,8 @@ public class MicroServer implements MicroTraderServer {
 		// save the order on map
 		saveOrder(o);
 
+		xmlPersistence(msg, null, 2);
+
 		// if is buy order
 		if (o.isBuyOrder()) {
 			processBuy(msg.getOrder());
@@ -350,6 +367,8 @@ public class MicroServer implements MicroTraderServer {
 		updatedOrders.add(buyOrder);
 		updatedOrders.add(sellerOrder);
 
+		xmlPersistence(null, buyOrder, 1);
+		xmlPersistence(null, sellerOrder, 1);
 	}
 
 	/**
@@ -401,5 +420,59 @@ public class MicroServer implements MicroTraderServer {
 				}
 			}
 		}
+	}
+
+	private void xmlPersistence(ServerSideMessage msg, Order order, int type) {
+		// type 1 is an order and type 2 is a message
+		try {
+
+			File inputFile = new File("C:/Users/Luciana Micael/git/ESII-2017-ICPL1-117-MiniTrader/persistence.xml");
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(inputFile);
+			doc.getDocumentElement().normalize();
+			Element newElementOrder = doc.createElement("Order");
+
+			if (type == 2) {
+				
+				newElementOrder.setAttribute("Id", Integer.toString(msg.getOrder().getServerOrderID()));
+				if (msg.getOrder().isBuyOrder())
+					newElementOrder.setAttribute("Type", "Buy");
+				else
+					newElementOrder.setAttribute("Type", "Sell");
+				newElementOrder.setAttribute("Stock", msg.getOrder().getStock());
+				newElementOrder.setAttribute("Units", Integer.toString(msg.getOrder().getNumberOfUnits()));
+				newElementOrder.setAttribute("Price", Double.toString(msg.getOrder().getPricePerUnit()));
+
+								
+			} else {
+				newElementOrder.setAttribute("Id", Integer.toString(order.getServerOrderID()));
+				if (order.isBuyOrder())
+					newElementOrder.setAttribute("Type", "Buy");
+				else
+					newElementOrder.setAttribute("Type", "Sell");
+				newElementOrder.setAttribute("Stock", order.getStock());
+				newElementOrder.setAttribute("Units", Integer.toString(order.getNumberOfUnits()));
+				newElementOrder.setAttribute("Price", Double.toString(order.getPricePerUnit()));
+				
+			}
+
+			// Add new node to XML document root element
+			System.out.println("----- Adding new element to root element -----");
+			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			Node n = doc.getDocumentElement();
+			n.appendChild(newElementOrder);
+			// Save XML document
+			System.out.println("Save XML document.");
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			StreamResult result = new StreamResult(new FileOutputStream("persistence.xml"));
+			DOMSource source = new DOMSource(doc);
+			transformer.transform(source, result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }
