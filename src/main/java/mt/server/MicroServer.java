@@ -37,6 +37,7 @@ import mt.comm.impl.ServerCommImpl;
 import mt.exception.ServerException;
 import mt.filter.AnalyticsFilter;
 
+// TODO: Auto-generated Javadoc
 /**
  * MicroTraderServer implementation. This class should be responsible to do the
  * business logic of stock transactions between buyers and sellers.
@@ -46,39 +47,37 @@ import mt.filter.AnalyticsFilter;
  */
 public class MicroServer implements MicroTraderServer {
 
+	/**
+	 * The main method.
+	 *
+	 * @param args the arguments
+	 */
 	public static void main(String[] args) {
 		ServerComm serverComm = new AnalyticsFilter(new ServerCommImpl());
 		MicroTraderServer server = new MicroServer();
 		server.start(serverComm);
 	}
 
+	/** The Constant LOGGER. */
 	public static final Logger LOGGER = Logger.getLogger(MicroServer.class.getName());
 
-	/**
-	 * Server communication
-	 */
+	/** Server communication. */
 	private ServerComm serverComm;
 
-	/**
-	 * A map to sore clients and clients orders
-	 */
+	/** A map to sore clients and clients orders. */
 	private Map<String, Set<Order>> orderMap;
 
-	/**
-	 * Orders that we must track in order to notify clients
-	 */
+	/** Orders that we must track in order to notify clients. */
 	private Set<Order> updatedOrders;
 
-	/**
-	 * Order Server ID
-	 */
+	/** Order Server ID. */
 	private static int id = 1;
 
-	/** The value is {@value #EMPTY} */
+	/**  The value is {@value #EMPTY}. */
 	public static final int EMPTY = 0;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 */
 	public MicroServer() {
 		LOGGER.log(Level.INFO, "Creating the server...");
@@ -86,6 +85,9 @@ public class MicroServer implements MicroTraderServer {
 		updatedOrders = new HashSet<>();
 	}
 
+	/* (non-Javadoc)
+	 * @see mt.server.MicroTraderServer#start(mt.comm.ServerComm)
+	 */
 	@Override
 	public void start(ServerComm serverComm) {
 		serverComm.start();
@@ -157,12 +159,10 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Verify if user is already connected
-	 * 
-	 * @param msg
-	 *            the message sent by the client
-	 * @throws ServerException
-	 *             exception thrown by the server indicating that the user is
+	 * Verify if user is already connected.
+	 *
+	 * @param msg            the message sent by the client
+	 * @throws ServerException             exception thrown by the server indicating that the user is
 	 *             not connected
 	 */
 	private void verifyUserConnected(ServerSideMessage msg) throws ServerException {
@@ -176,13 +176,10 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Process the user connection
-	 * 
-	 * @param msg
-	 *            the message sent by the client
-	 * 
-	 * @throws ServerException
-	 *             exception thrown by the server indicating that the user is
+	 * Process the user connection.
+	 *
+	 * @param msg            the message sent by the client
+	 * @throws ServerException             exception thrown by the server indicating that the user is
 	 *             already connected
 	 */
 	private void processUserConnected(ServerSideMessage msg) throws ServerException {
@@ -202,9 +199,9 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Send current active orders sorted by server ID ASC
-	 * 
-	 * @param msg
+	 * Send current active orders sorted by server ID ASC.
+	 *
+	 * @param msg the msg
 	 */
 	private void notifyClientsOfCurrentActiveOrders(ServerSideMessage msg) {
 		List<Order> ordersToSend = new ArrayList<>();
@@ -230,10 +227,9 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Process the user disconnection
-	 * 
-	 * @param msg
-	 *            the message sent by the client
+	 * Process the user disconnection.
+	 *
+	 * @param msg            the message sent by the client
 	 */
 	private void processUserDisconnected(ServerSideMessage msg) {
 		LOGGER.log(Level.INFO, "Disconnecting client " + msg.getSenderNickname() + "...");
@@ -251,10 +247,10 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Process the new received order
-	 * 
-	 * @param msg
-	 *            the message sent by the client
+	 * Process the new received order.
+	 *
+	 * @param msg            the message sent by the client
+	 * @throws ServerException the server exception
 	 */
 	private void processNewOrder(ServerSideMessage msg) throws ServerException {
 		LOGGER.log(Level.INFO, "Processing new order...");
@@ -288,10 +284,9 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Store the order on map
-	 * 
-	 * @param o
-	 *            the order to be stored on map
+	 * Store the order on map.
+	 *
+	 * @param o            the order to be stored on map
 	 */
 	private void saveOrder(Order o) {
 		LOGGER.log(Level.INFO, "Storing the new order...");
@@ -302,10 +297,9 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Process the sell order
-	 * 
-	 * @param sellOrder
-	 *            Order sent by the client with a number of units of a stock and
+	 * Process the sell order.
+	 *
+	 * @param sellOrder            Order sent by the client with a number of units of a stock and
 	 *            the price per unit he wants to sell
 	 */
 	private void processSell(Order sellOrder) {
@@ -323,10 +317,9 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Process the buy order
-	 * 
-	 * @param buyOrder
-	 *            Order sent by the client with a number of units of a stock and
+	 * Process the buy order.
+	 *
+	 * @param buyOrder            Order sent by the client with a number of units of a stock and
 	 *            the price per unit he wants to buy
 	 */
 	private void processBuy(Order buyOrder) {
@@ -344,13 +337,11 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Process the transaction between buyer and seller
-	 * 
-	 * @param buyOrder
-	 *            Order sent by the client with a number of units of a stock and
+	 * Process the transaction between buyer and seller.
+	 *
+	 * @param buyOrder            Order sent by the client with a number of units of a stock and
 	 *            the price per unit he wants to buy
-	 * @param sellerOrder
-	 *            Order sent by the client with a number of units of a stock and
+	 * @param sellerOrder            Order sent by the client with a number of units of a stock and
 	 *            the price per unit he wants to sell
 	 */
 	private void doTransaction(Order buyOrder, Order sellerOrder) {
@@ -372,10 +363,9 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Notifies clients about a changed order
-	 * 
-	 * @throws ServerException
-	 *             exception thrown in the method notifyAllClients, in case
+	 * Notifies clients about a changed order.
+	 *
+	 * @throws ServerException             exception thrown in the method notifyAllClients, in case
 	 *             there's no order
 	 */
 	private void notifyClientsOfChangedOrders() throws ServerException {
@@ -386,12 +376,10 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Notifies all clients about a new order
-	 * 
-	 * @param order
-	 *            refers to a client buy order or a sell order
-	 * @throws ServerException
-	 *             exception thrown by the server indicating that there is no
+	 * Notifies all clients about a new order.
+	 *
+	 * @param order            refers to a client buy order or a sell order
+	 * @throws ServerException             exception thrown by the server indicating that there is no
 	 *             order
 	 */
 	private void notifyAllClients(Order order) throws ServerException {
@@ -405,7 +393,7 @@ public class MicroServer implements MicroTraderServer {
 	}
 
 	/**
-	 * Remove fulfilled orders
+	 * Remove fulfilled orders.
 	 */
 	private void removeFulfilledOrders() {
 		LOGGER.log(Level.INFO, "Removing fulfilled orders...");
@@ -422,6 +410,14 @@ public class MicroServer implements MicroTraderServer {
 		}
 	}
 
+	/**
+	 * Record persistently all the transactions in an XML document without sellers/buyers identification
+	 *(region US)
+	 *
+	 * @param msg the ServerSide message
+	 * @param order the order
+	 * @param type the type
+	 */
 	private void xmlPersistence(ServerSideMessage msg, Order order, int type) {
 		// type 1 is an order and type 2 is a message
 		try {
