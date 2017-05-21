@@ -12,20 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.jar.JarOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -406,8 +402,15 @@ public class MicroServer implements MicroTraderServer {
 			}
 		}
 	}
+	/**
+	 * Implemented functional requirements:
+	 *  - Record persistently all the transactions in an XML document including sellers/buyers identification (regions AS).
+	 * 
+	 * @param msg
+	 * @param order
+	 * @param type: type 1 is an order and type 2 is a message
+	 */
 	private void xmlPersistence(ServerSideMessage msg, Order order, int type) {
-		// type 1 is an order and type 2 is a message
 		try {
 
 			File inputFile = new File("C:/Users/djrart/git/ESII-2017-ICPL1-117-MiniTrader/persistence.xml");

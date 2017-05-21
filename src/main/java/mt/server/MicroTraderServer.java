@@ -12,9 +12,9 @@ import mt.comm.ServerComm;
 public interface MicroTraderServer {
 	/**
 	 * Starts the server. Should only exit when the server quits.
+	 * A single order quantity (buy or sell order) can never be lower than 10.
 	 * 
 	 * @param serverComm the object through which all communication with clients should take place.
 	 */
-	
 	public void start(ServerComm serverComm);
 }
