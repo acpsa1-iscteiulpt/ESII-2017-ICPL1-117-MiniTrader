@@ -128,7 +128,7 @@ public class MicroServer implements MicroTraderServer {
 						if (order.isSellOrder())
 							sellOrders++;						
 					}
-					if (msg.getOrder().getNumberOfUnits() < 10) {
+				/*	if (msg.getOrder().getNumberOfUnits() < 10) {
 						String aviso3 = "Não podes fazer um pedido com quantidade inferior a 10 unidades.";
 						JOptionPane.showMessageDialog(null, aviso3);
 						regra3OK = false;
@@ -137,7 +137,17 @@ public class MicroServer implements MicroTraderServer {
 						String aviso = "Já tens 5 pedidos de venda por liquidar.";
 						JOptionPane.showMessageDialog(null, aviso);
 						regra2OK = false;
+					}*/
+					
+					if (msg.getOrder().getNumberOfUnits() < 10) {
+						JOptionPane.showMessageDialog(null, "Não podes fazer um pedido com quantidade inferior a 10 unidades.");
+						regra3OK = false;
 					}
+					if (sellOrders == 5 && msg.getOrder().isSellOrder()) {
+						JOptionPane.showMessageDialog(null, "Já tens 5 pedidos de venda por liquidar.");
+						regra2OK = false;
+					}
+					
 					
 						if (regra2OK == true && regra3OK == true) {
 							if (msg.getOrder().getServerOrderID() == EMPTY) {
