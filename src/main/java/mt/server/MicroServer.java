@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.jar.JarOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +20,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -128,14 +126,14 @@ public class MicroServer implements MicroTraderServer {
 						if (order.isSellOrder())
 							sellOrders++;						
 					}
+					
+					
 					if (msg.getOrder().getNumberOfUnits() < 10) {
-						String aviso3 = "Não podes fazer um pedido com quantidade inferior a 10 unidades.";
-						JOptionPane.showMessageDialog(null, aviso3);
+						JOptionPane.showMessageDialog(null, "Não podes fazer um pedido com quantidade inferior a 10 unidades.");
 						regra3OK = false;
 					}
 					if (sellOrders == 5 && msg.getOrder().isSellOrder()) {
-						String aviso = "Já tens 5 pedidos de venda por liquidar.";
-						JOptionPane.showMessageDialog(null, aviso);
+						JOptionPane.showMessageDialog(null, "Já tens 5 pedidos de venda por liquidar.");
 						regra2OK = false;
 					}
 					
